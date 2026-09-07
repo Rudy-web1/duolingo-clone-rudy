@@ -772,22 +772,3 @@ This project was created for educational and demonstration purposes.
 
 It is not affiliated with or endorsed by Duolingo.
 
-
-### After pasting it
-
-Save the file as:
-
-```text
-README.md
-
-in the root of:
-
-duolingo-clone-rudy/
-
-Then run:
-
-git add README.md
-git commit -m "Improve project README"
-git push origin main
-
-That's it. No code changes and no Vercel redeployment are needed for the README.
