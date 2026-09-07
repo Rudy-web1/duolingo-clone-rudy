@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Lock, Play, RotateCcw } from "lucide-react";
+import { BookOpen, Check, Lock, Play, RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { SkillOut } from "@/lib/types";
 
@@ -27,7 +27,7 @@ export default function SkillNode({
    * crown 1 → lesson 1
    * crown 2 → lesson 2
    *
-   * This is the important progression fix.
+   * Keep this progression logic unchanged.
    */
   const nextLesson =
     skill.lessons.find(
@@ -42,9 +42,23 @@ export default function SkillNode({
     );
   }
 
+  function handleLearnClick(
+    event: React.MouseEvent<HTMLButtonElement>
+  ) {
+    /*
+     * Prevent the Learn button from triggering the main
+     * skill-node button behavior.
+     */
+    event.stopPropagation();
+
+    router.push(`/guidebook/${skill.id}`);
+  }
+
   const progressPercent =
     skill.max_crowns > 0
-      ? Math.round((skill.crowns / skill.max_crowns) * 100)
+      ? Math.round(
+          (skill.crowns / skill.max_crowns) * 100
+        )
       : 0;
 
   return (
@@ -56,15 +70,16 @@ export default function SkillNode({
         transform: `translateX(${offsetPx}px)`,
       }}
     >
-      {/* Current skill indicator */}
       {isCurrent && !locked && (
         <div className="current-pill">
           <Play size={13} fill="currentColor" />
-          {skill.crowns === 0 ? "START" : "CONTINUE"}
+          {skill.crowns === 0
+            ? "START"
+            : "CONTINUE"}
         </div>
       )}
 
-      {/* Skill circle */}
+      {/* Main skill button */}
       <button
         onClick={handleClick}
         disabled={locked}
@@ -82,9 +97,7 @@ export default function SkillNode({
         style={
           locked
             ? undefined
-            : {
-                backgroundColor: color,
-              }
+            : { backgroundColor: color }
         }
       >
         {locked ? (
@@ -104,65 +117,86 @@ export default function SkillNode({
         )}
       </button>
 
-      {/* Skill name */}
       <div
         className={`skill-label ${
-          locked ? "skill-label-locked" : ""
+          locked
+            ? "skill-label-locked"
+            : ""
         }`}
       >
         {skill.title}
       </div>
 
-      {/* Crown / level progress */}
-      {!locked && skill.max_crowns > 0 && (
-        <div className="skill-progress-area">
-          <div className="skill-crowns">
-            {Array.from({
-              length: skill.max_crowns,
-            }).map((_, index) => (
-              <span
-                key={index}
-                className={
-                  index < skill.crowns
-                    ? "crown-earned"
-                    : "crown-empty"
-                }
-              >
-                ★
-              </span>
-            ))}
-          </div>
+      {/* =====================================================
+          GUIDEBOOK BUTTON
+          Available for every skill, including locked skills.
+          This does NOT unlock the lesson.
+          ===================================================== */}
+      <button
+        type="button"
+        onClick={handleLearnClick}
+        className="skill-learn-button"
+        aria-label={`Learn ${skill.title}`}
+      >
+        <BookOpen
+          size={14}
+          strokeWidth={3}
+        />
 
-          <div className="skill-progress-text">
-            {completed
-              ? "MASTERED"
-              : `LEVEL ${Math.min(
-                  skill.crowns + 1,
-                  skill.max_crowns
-                )} OF ${skill.max_crowns}`}
-          </div>
+        <span>LEARN</span>
+      </button>
 
-          {!completed && (
-            <div className="skill-mini-progress">
-              <div
-                className="skill-mini-progress-fill"
-                style={{
-                  width: `${progressPercent}%`,
-                  backgroundColor: color,
-                }}
-              />
+      {!locked &&
+        skill.max_crowns > 0 && (
+          <div className="skill-progress-area">
+            <div className="skill-crowns">
+              {Array.from({
+                length: skill.max_crowns,
+              }).map((_, index) => (
+                <span
+                  key={index}
+                  className={
+                    index < skill.crowns
+                      ? "crown-earned"
+                      : "crown-empty"
+                  }
+                >
+                  ★
+                </span>
+              ))}
             </div>
-          )}
 
-          {completed && (
-            <div className="skill-complete-label">
-              ✓ COMPLETE
+            <div className="skill-progress-text">
+              {completed
+                ? "MASTERED"
+                : `LEVEL ${Math.min(
+                    skill.crowns + 1,
+                    skill.max_crowns
+                  )} OF ${
+                    skill.max_crowns
+                  }`}
             </div>
-          )}
-        </div>
-      )}
 
-      {/* Review label for mastered skills */}
+            {!completed && (
+              <div className="skill-mini-progress">
+                <div
+                  className="skill-mini-progress-fill"
+                  style={{
+                    width: `${progressPercent}%`,
+                    backgroundColor: color,
+                  }}
+                />
+              </div>
+            )}
+
+            {completed && (
+              <div className="skill-complete-label">
+                ✓ COMPLETE
+              </div>
+            )}
+          </div>
+        )}
+
       {completed && (
         <div className="skill-review-hint">
           <RotateCcw size={12} />

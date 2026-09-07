@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import Base, engine
-from .routers import path, lessons, users
+from .routers import path, lessons, users, guidebook
 from .seed import seed
 
 app = FastAPI(title="Duolingo Clone API", version="1.0.0")
@@ -27,6 +27,7 @@ app.add_middleware(
 app.include_router(path.router)
 app.include_router(lessons.router)
 app.include_router(users.router)
+app.include_router(guidebook.router)
 
 
 @app.on_event("startup")

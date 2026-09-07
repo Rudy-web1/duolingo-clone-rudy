@@ -1,6 +1,13 @@
 import type {
-  PathResponse, LessonDetail, AnswerResult, LessonCompleteResponse,
-  HeartsRefillResponse, LeaderboardEntry, ProfileResponse, UserOut,
+  PathResponse,
+  LessonDetail,
+  AnswerResult,
+  LessonCompleteResponse,
+  HeartsRefillResponse,
+  LeaderboardEntry,
+  ProfileResponse,
+  UserOut,
+  GuidebookResponse,
 } from "./types";
 
 // Assumption (per assignment spec): auth is simplified to a single default
@@ -52,4 +59,9 @@ export const api = {
 
   getProfile: (userId: number = DEFAULT_USER_ID) =>
     request<ProfileResponse>(`/api/users/${userId}/profile`),
+
+  getGuidebook: (skillId: number) =>
+    request<GuidebookResponse>(
+      `/api/guidebook/${skillId}`
+    ),
 };

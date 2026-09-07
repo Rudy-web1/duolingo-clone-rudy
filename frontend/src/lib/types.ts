@@ -119,3 +119,34 @@ export interface ProfileResponse {
   skills_completed: number;
   achievements: AchievementOut[];
 }
+export interface GuidebookCard {
+  type: "vocabulary" | "sentence" | "example";
+  spanish: string;
+  english: string;
+  tip: string;
+}
+
+export interface GuidebookLesson {
+  id: number;
+  order_index: number;
+  xp_reward: number;
+}
+
+export interface GuidebookResponse {
+  skill: {
+    id: number;
+    title: string;
+    icon: string;
+    max_crowns: number;
+  };
+  subtitle: string;
+  intro: string;
+  cards: GuidebookCard[];
+  lessons: GuidebookLesson[];
+  progress: {
+    crowns: number;
+    is_unlocked: boolean;
+    is_completed: boolean;
+  };
+  next_lesson_id: number | null;
+}
