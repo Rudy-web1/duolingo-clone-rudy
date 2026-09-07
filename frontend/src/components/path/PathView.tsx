@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { CourseOut, SkillOut } from "@/lib/types";
+import { api } from "@/lib/api";
 import SkillNode from "./SkillNode";
 
 const ZIGZAG = [-70, 0, 70, 35, -35, -70, 0, 70];
@@ -26,14 +27,8 @@ export default function PathView({ course }: { course: CourseOut }) {
      --------------------------------------------- */
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/users/1")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to load user stats");
-        }
-
-        return res.json();
-      })
+    api
+      .getUser(1)
       .then((data) => {
         setStats({
           xp: data.xp_total ?? 0,
